@@ -19,10 +19,12 @@
     "@openai/agents": "^0.18.0",
     "@tailwindcss/vite": "^4.3.3",
     "mem0ai": "^3.3.1",
-    "nuxt": "^4.6.0",
+    "neatlogs": "^1.1.28",
+    "nuxt": "^4.6.1",
     "reicon-vue": "^1.1.104",
     "supermemory": "^5.0.1",
     "tailwindcss": "^4.3.3",
+    "v-gsap-nuxt": "^1.5.12",
     "vue": "^3.5.43",
     "vue-router": "^5.3.1"
   }

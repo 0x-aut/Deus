@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SmoothCorners } from "@lisse/vue";
 import {
   Home6,
   FolderFiles,
@@ -83,56 +84,53 @@ const avatarFailed = ref(false);
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-white font-sans text-neutral-900 antialiased">
+  <div class="flex min-h-screen bg-[#F4F4F4] font-sans text-neutral-900 antialiased">
     <!-- ============ Sidebar (smaller column) ============ -->
     <aside
-      class="sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-neutral-200 bg-white md:flex"
+      class="sticky top-0 hidden h-screen w-55 shrink-0 flex-col border-r border-[#D9D9D9] md:flex"
     >
       <!-- Brand: logo image + platform name -->
       <div class="flex items-center gap-3 px-5 pb-5 pt-6">
         <div
-          class="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-900 font-display text-lg text-white"
+          class="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden"
         >
-          <span class="select-none">D</span>
           <!-- Replace src with your product logo. Expected at `public/logo.png` -->
           <NuxtImg
             v-if="!logoFailed"
-            src="/logo.png"
+            src="/demi_hero_choice_2i.svg"
             alt="deus logo"
             class="absolute inset-0 h-full w-full object-cover"
             @error="logoFailed = true"
           />
         </div>
         <div class="min-w-0 leading-tight">
-          <p class="truncate font-display text-[22px]">deus</p>
+          <span class="font-sans text-md font-medium">Deus</span>
         </div>
       </div>
 
       <!-- Scrollable nav region -->
       <nav class="flex-1 overflow-y-auto px-3 pb-4 noscrollbar" aria-label="Primary">
-        <ul class="space-y-1">
-          <li v-for="item in appNavigation" :key="item.name">
+        <div v-for="item in appNavigation" :key="item.to" class="relative group">
+          <SmoothCorners as-child :corners="{ radius: 0, smoothing: 0.6 }">
             <NuxtLink
               :to="item.to"
-              :aria-current="isActive(item.to) ? 'page' : undefined"
               :class="[
-                'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors',
-                isActive(item.to)
-                  ? 'bg-neutral-900 font-medium text-white shadow-sm'
-                  : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                'flex items-center gap-x-1.5 px-2.5 py-1 transition-colors duration-100',
+                route.path === item.to || route.path.startsWith(item.to) ? 'bg-[#E3E3E3]' : 'hover:bg-[#EBEBEB]'
               ]"
             >
-              <component
-                :is="item.icon"
-                :class="[
-                  'h-5 w-5 shrink-0',
-                  isActive(item.to) ? 'text-white' : 'text-neutral-400 group-hover:text-neutral-700',
-                ]"
-              />
-              <span class="truncate">{{ item.name }}</span>
+              <component :is="item.icon" :size="14" :stroke-width="1.8" :class="[
+                'transition-colors duration-100',
+                route.path === item.to || route.path.startsWith(item.to) ? 'text-[#121212]' : 'text-[#6B6B6B] group-hover:text-[#121212]'
+              ]" />
+                <span :class="[
+                  'unmodified-font-sans text-sm font-normal transition-colors duration-100',
+                  route.path === item.to || route.path.startsWith(item.to) ? 'text-[#121212]' : 'text-[#6B6B6B] group-hover:text-[#121212]'
+                ]">{{ item.name }}</span>
             </NuxtLink>
-          </li>
-        </ul>
+          </SmoothCorners>
+          <!-- <ElementsNavTooltip :text="item.tooltip" /> -->
+        </div>
 
         <!-- Agents created by the user -->
         <div class="mt-7 px-3 pb-2">
@@ -164,10 +162,6 @@ const avatarFailed = ref(false);
                   class="h-full w-full object-cover"
                 />
                 <component :is="agent.icon ?? Cpu" v-else class="h-4.5 w-4.5 text-neutral-500" />
-                <span
-                  class="absolute bottom-0.5 right-0.5 h-2 w-2 rounded-full border border-white bg-emerald-500"
-                  title="Live"
-                />
               </span>
               <span class="min-w-0 flex-1 truncate">{{ agent.name }}</span>
             </NuxtLink>

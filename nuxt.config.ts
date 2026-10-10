@@ -1,6 +1,22 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
-  modules: ['@nuxt/fonts', '@nuxt/image', '@nuxt/scripts'],
+  modules: ['@nuxt/fonts', '@nuxt/image', '@nuxt/scripts', 'v-gsap-nuxt'],
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true }
+  devtools: { enabled: false },
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+  },
+  
+  css: ['@/assets/css/main.css'],
+
+  fonts: {
+    families: [
+      { name: 'Switzer', provider: 'fontshare', weights: [400, 500, 600, 700], styles: ['normal', 'italic'] },
+      { name: 'Gambarino', provider: 'fontshare', weights: [400], styles: ['normal', 'italic'] },
+      { name: 'Geist', provider: 'google', weights:['100 600'], styles: ['normal'] }
+    ],
+  },
 })
