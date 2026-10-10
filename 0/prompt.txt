@@ -1,0 +1,1 @@
+Build the app layout in app.vue in the layouts folder: professional sidebar with logo slot and deus name, main routes with icons, Agent section with image slots, profile card pinned at bottom, two-column layout.
