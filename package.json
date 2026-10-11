@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@comark/vue": "^0.7.0",
     "@composio/core": "^0.22.0",
     "@composio/openai-agents": "^0.11.1",
     "@lisse/vue": "^0.7.2",

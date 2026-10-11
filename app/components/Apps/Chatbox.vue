@@ -41,10 +41,10 @@ function abort() {}
 </script>
 
 <template>
-  <div class="flex w-full justify-center">
+  <div class="relative flex w-full justify-center">
     <div
       :class="[
-        'flex w-full max-w-2xl flex-col px-2 py-8',
+        'relative flex w-full max-w-2xl flex-col px-2 pt-8 pb-2',
         hasMessages
           ? 'h-[calc(100dvh-2.75rem)] justify-between gap-y-5'
           : 'justify-center',
@@ -54,7 +54,7 @@ function abort() {}
       <div
         v-if="hasMessages"
         ref="messageListRef"
-        class="flex min-h-0 noscrollbar flex-1 flex-col gap-y-5 overflow-y-auto px-1 py-2"
+        class="relative z-0 noscrollbar flex min-h-0 flex-1 flex-col gap-y-5 overflow-y-auto px-1 py-2 pb-36"
         aria-live="polite"
       >
         <div
@@ -95,13 +95,19 @@ function abort() {}
         </div>
       </div>
 
-      <!-- Input bar -->
-      <div class="shrink-0">
+      <!-- Input bar — floats above messages so text scrolls underneath -->
+      <div
+        :class="[
+          hasMessages
+            ? 'absolute inset-x-2 bottom-2 z-20 bg-gradient-to-b from-transparent via-[#FAFAFA]/80 to-[#FAFAFA] pt-10'
+            : 'relative z-10 shrink-0 bg-transparent',
+        ]"
+      >
         <SmoothCorners
           as-child
-          :corners="{ radius: 0, smoothing: 0.6 }"
+          :corners="{ radius: 2.5, smoothing: 0.6 }"
           :middle-border="isFocused
-            ? { width: 1.5, color: { type: 'solid', color: '#D0D0D0' }, opacity: 1 }
+            ? { width: 1, color: '#D0D0D0', opacity: 0.5 }
             : { width: 1, color: { type: 'linear', angle: 180, stops: [{ offset: 0, color: '#E5E5E5' }, { offset: 1, color: '#F4F4F4' }] }, opacity: 0.6 }"
         >
           <div
@@ -115,7 +121,7 @@ function abort() {}
               rows="1"
               :placeholder="`Ask ${displayName ?? 'Demi'} anything`"
               :aria-label="`Message ${displayName ?? 'Demi'}`"
-              class="max-h-[200px] resize-none overflow-y-auto bg-transparent px-1.5 py-1 text-sm font-medium text-[#1a1a1a] outline-none placeholder:text-[#A0A0A0]"
+              class="max-h-50 resize-none overflow-y-auto bg-transparent px-1.5 py-1 text-sm font-medium text-[#1a1a1a] outline-none placeholder:text-[#A0A0A0]"
               @input="adjustHeight"
               @keydown="handleKeyDown"
             />

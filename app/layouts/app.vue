@@ -90,7 +90,7 @@ const avatarFailed = ref(false);
       class="sticky top-0 hidden h-screen w-55 shrink-0 flex-col border-r border-[#D9D9D9] md:flex"
     >
       <!-- Brand: logo image + platform name -->
-      <div class="flex items-center gap-3 px-5 pb-5 pt-6">
+      <div class="flex items-center gap-1 px-3.5 pb-5 pt-6">
         <div
           class="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden"
         >
@@ -111,7 +111,7 @@ const avatarFailed = ref(false);
       <!-- Scrollable nav region -->
       <nav class="flex-1 overflow-y-auto px-3 pb-4 noscrollbar" aria-label="Primary">
         <div v-for="item in appNavigation" :key="item.to" class="relative group">
-          <SmoothCorners as-child :corners="{ radius: 0, smoothing: 0.6 }">
+          <SmoothCorners as-child :corners="{ radius: 0.5, smoothing: 0.6 }">
             <NuxtLink
               :to="item.to"
               :class="[
@@ -230,10 +230,10 @@ const avatarFailed = ref(false);
     </aside>
 
     <!-- ============ Main content (larger column) ============ -->
-    <div class="min-w-0 flex-1">
-      <main class="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-8">
-        <slot />
-      </main>
-    </div>
+    <section class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[#FAFAFA]">
+      <section class="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+        <NuxtPage />
+      </section>
+    </section>
   </div>
 </template>
