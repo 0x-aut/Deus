@@ -1,31 +1,65 @@
 <script setup lang="ts">
 import { SmoothCorners } from "@lisse/vue";
 import { ArrowUp, Plus, SliderHorizontal } from "reicon-vue";
+import type { ChatMessage } from "../../utils/chat";
 
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
+const props = withDefaults(
+  defineProps<{
+    chatId?: string | null;
+    initialMessages?: ChatMessage[];
+    displayName?: string;
+  }>(),
+  { chatId: null, initialMessages: () => [], displayName: "Demi" },
+);
+
+const emit = defineEmits<{
+  send: [message: ChatMessage];
+  "first-message": [content: string];
+}>();
 
 const isLoading = ref(false);
 const isFocused = ref(false);
 const message = ref("");
 const requestError = ref<string | null>(null);
-const displayName = ref("Demi");
 const selectedModel = ref("gpt-6-luna");
 
 const messageListRef = ref<HTMLElement | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-// Sample messages so the list renders. Not wired to anything yet.
-const messages = ref<ChatMessage[]>([
+// Sample messages so the empty state still previews the list styling.
+const SAMPLE: ChatMessage[] = [
   { id: "sample-1", role: "user", content: "What can you help my business with?" },
   { id: "sample-2", role: "assistant", content: "I can help with sales, support, and ops. Ask me anything to get started." },
-]);
+];
+
+const messages = ref<ChatMessage[]>(
+  props.initialMessages.length ? [...props.initialMessages] : [...SAMPLE],
+);
+const isNewChat = computed(() => !props.chatId);
+
+// Switching chats resets the thread; a brand-new chat shows the preview.
+watch(
+  () => props.chatId,
+  () => {
+    messages.value = props.initialMessages.length ? [...props.initialMessages] : [...SAMPLE];
+    message.value = "";
+    requestError.value = null;
+    isLoading.value = false;
+    nextTick(scrollToBottom);
+  },
+);
 
 const hasMessages = computed(() => messages.value.length > 0);
 const canSend = computed(() => !isLoading.value && message.value.trim().length > 0);
+
+function uid(prefix: string) {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function scrollToBottom() {
+  const el = messageListRef.value;
+  if (el) el.scrollTop = el.scrollHeight;
+}
 
 function adjustHeight() {
   const el = textareaRef.value;
@@ -34,10 +68,47 @@ function adjustHeight() {
   el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
 }
 
-// Placeholders — intentionally do nothing for now.
-function handleKeyDown(_event: KeyboardEvent) {}
-function handleSend() {}
-function abort() {}
+function handleKeyDown(event: KeyboardEvent) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    handleSend();
+  }
+}
+
+function handleSend() {
+  const content = message.value.trim();
+  if (!canSend.value || !content) return;
+  if (isNewChat.value && messages.value.length === SAMPLE.length) {
+    // fresh thread — drop the preview, the parent creates the real chat
+    messages.value = [];
+    emit("first-message", content);
+  }
+  const userMessage: ChatMessage = { id: uid("msg"), role: "user", content };
+  messages.value.push(userMessage);
+  emit("send", userMessage);
+  message.value = "";
+  nextTick(() => {
+    adjustHeight();
+    scrollToBottom();
+  });
+
+  // Stub reply until the agent backend is wired.
+  isLoading.value = true;
+  requestError.value = null;
+  window.setTimeout(() => {
+    messages.value.push({
+      id: uid("msg"),
+      role: "assistant",
+      content: "Got it — I'm still being wired up to the agent backend, so I can't answer properly yet. Your message is saved to this chat though.",
+    });
+    isLoading.value = false;
+    nextTick(scrollToBottom);
+  }, 900);
+}
+
+function abort() {
+  isLoading.value = false;
+}
 </script>
 
 <template>
